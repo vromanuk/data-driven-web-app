@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 from application.pypi_org.infrastructure.view_modifiers import response
-from application.services import package_service as package_service
+from application.pypi_org.services import package_service
 
 blueprint = Blueprint('home', __name__, template_folder='templates')
 
