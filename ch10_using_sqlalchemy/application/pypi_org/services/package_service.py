@@ -14,7 +14,6 @@ def get_latest_releases(limit=10) -> List[Release]:
         order_by(Release.created_date.desc()). \
         limit(limit). \
         all()
-    print(releases)
     session.close()
 
     return releases
