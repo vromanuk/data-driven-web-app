@@ -1,5 +1,6 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
+from sqlalchemy.orm import Session
 
 from application.pypi_org.data.modelbase import SqlAlchemyBase
 
@@ -25,3 +26,8 @@ def global_init(db_file: str):
     import pypi_org.data.__all_models
 
     SqlAlchemyBase.metadata.create_all(engine)
+
+
+def create_session() -> Session:
+    global __factory
+    return __factory()
