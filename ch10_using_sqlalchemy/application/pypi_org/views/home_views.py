@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 from application.pypi_org.infrastructure.view_modifiers import response
-from application.pypi_org.services import package_service
+from application.pypi_org.services import package_service, user_service
 
 blueprint = Blueprint('home', __name__, template_folder='templates')
 
@@ -10,7 +10,12 @@ blueprint = Blueprint('home', __name__, template_folder='templates')
 @response(template_file='home/index.html')
 def index():
     test_packages = package_service.get_latest_packages()
-    return {'packages': test_packages}
+    return {
+        'packages': test_packages,
+        'package_count': package_service.get_package_count(),
+        'release_count': package_service.get_release_count(),
+        'user_count': user_service.get_user_count(),
+    }
     # return flask.render_template('home/index.html', packages=test_packages)
 
 
