@@ -22,3 +22,8 @@ def index():
 @response(template_file='home/about.html')
 def about():
     return {}
+
+#
+# @blueprint.route('/test')
+# def test():
+#     return package_service.test()

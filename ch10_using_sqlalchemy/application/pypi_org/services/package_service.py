@@ -45,3 +45,19 @@ def get_package_by_id(package_id: str) -> Optional[Package]:
     session.close()
 
     return package
+
+#
+# def test():
+#     """
+#     My test function for practicing sqlalchemy queries
+#     """
+#     session = db_session.create_session()
+#     result = session.query(Package). \
+#         filter(
+#         or_(
+#             Package.id.like("flask"),
+#             Package.id == "boto3")) \
+#         .all()
+#
+#     print(result)
+#     return {'message': result}
