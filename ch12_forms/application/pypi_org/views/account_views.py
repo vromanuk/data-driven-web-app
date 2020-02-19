@@ -1,5 +1,6 @@
 from flask import Blueprint, request, redirect
 
+from application.pypi_org.infrastructure import cookie_auth
 from application.pypi_org.infrastructure.view_modifiers import response
 from application.pypi_org.services import user_service
 
@@ -9,7 +10,13 @@ blueprint = Blueprint('account', __name__, template_folder='templates')
 @blueprint.route('/account')
 @response(template_file='account/index.html')
 def index():
-    return {}
+    user_id = cookie_auth.get_user_id_via_auth_cookie(request)
+    user = user_service.find_user_by_id(user_id)
+    if not user:
+        redirect('/account/login')
+    return {
+        'user': user
+    }
 
 
 @blueprint.route('/account/register', methods=['GET'])
@@ -42,8 +49,9 @@ def register_post():
             'password': password,
             'error': "A user with that email already exists."
         }
-
-    return redirect('/account')
+    resp = redirect('/account')
+    cookie_auth.set_auth(resp, user.id)
+    return resp
 
 
 @blueprint.route('/account/login', methods=['GET'])
@@ -74,10 +82,14 @@ def login_post():
             'password': password,
             'error': "The account doesn't exist or the password is wrong."
         }
-
-    return redirect('/account')
+    resp = redirect('/account')
+    cookie_auth.set_auth(resp, user.id)
+    return resp
 
 
 @blueprint.route('/account/logout')
 def logout():
-    return {}
+    resp = redirect('/')
+    cookie_auth.logout(resp)
+
+    return resp

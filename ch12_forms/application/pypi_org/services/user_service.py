@@ -47,3 +47,9 @@ def login_user(email: str, password: str) -> Optional[User]:
     if not verify_hash(user.hashed_password, password):
         return None
     return user
+
+
+def find_user_by_id(user_id: int) -> Optional[User]:
+    session = db_session.create_session()
+    user = session.query(User).get(user_id)
+    return user
