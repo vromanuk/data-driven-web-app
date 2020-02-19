@@ -28,11 +28,11 @@ def register_get():
 @blueprint.route('/account/register', methods=['POST'])
 @response(template_file='account/register.html')
 def register_post():
-    req = request
+    data = request_dict.create(default_val='')
 
-    name = req.form.get('name')
-    email = req.form.get('email', '').lower().strip()
-    password = req.form.get('password', '').strip()
+    name = data.name
+    email = data.email.lower().strip()
+    password = data.password.strip()
 
     if not (name or email or password):
         return {
