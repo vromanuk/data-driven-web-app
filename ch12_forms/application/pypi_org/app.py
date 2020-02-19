@@ -29,10 +29,12 @@ def register_blueprints():
     from application.pypi_org.views import home_views
     from application.pypi_org.views import package_views
     from application.pypi_org.views import cms_views
+    from application.pypi_org.views import account_views
 
     app.register_blueprint(home_views.blueprint)
     app.register_blueprint(package_views.blueprint)
     app.register_blueprint(cms_views.blueprint)
+    app.register_blueprint(account_views.blueprint)
 
 
 if __name__ == '__main__':
