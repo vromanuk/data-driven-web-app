@@ -1,6 +1,6 @@
 from flask import Blueprint, request, redirect
 
-from application.pypi_org.infrastructure import cookie_auth
+from application.pypi_org.infrastructure import cookie_auth, request_dict
 from application.pypi_org.infrastructure.view_modifiers import response
 from application.pypi_org.services import user_service
 
@@ -63,10 +63,10 @@ def login_get():
 @blueprint.route('/account/login', methods=['POST'])
 @response(template_file='account/login.html')
 def login_post():
-    req = request
+    data = request_dict.create()
 
-    email = req.form.get('email', '').lower().strip()
-    password = req.form.get('password', '').strip()
+    email = data.email.lower().strip()
+    password = data.password.strip()
 
     if not (email or password):
         return {
