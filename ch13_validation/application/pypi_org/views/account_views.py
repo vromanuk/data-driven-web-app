@@ -1,9 +1,10 @@
-from flask import Blueprint, request, redirect
+from flask import Blueprint, redirect
 
-from application.pypi_org.infrastructure import cookie_auth, request_dict
+from application.pypi_org.infrastructure import cookie_auth
 from application.pypi_org.infrastructure.view_modifiers import response
 from application.pypi_org.services import user_service
 from application.pypi_org.viewmodels.account.index_viewmodel import IndexViewModel
+from application.pypi_org.viewmodels.account.login_viewmodel import LoginViewModel
 from application.pypi_org.viewmodels.account.register_viewmodel import RegisterViewModel
 
 blueprint = Blueprint('account', __name__, template_folder='templates')
@@ -47,33 +48,27 @@ def register_post():
 @blueprint.route('/account/login', methods=['GET'])
 @response(template_file='account/login.html')
 def login_get():
-    return {}
+    vm = LoginViewModel()
+    return vm.to_dict()
 
 
 @blueprint.route('/account/login', methods=['POST'])
 @response(template_file='account/login.html')
 def login_post():
-    data = request_dict.create()
+    vm = LoginViewModel()
+    vm.validate()
 
-    email = data.email.lower().strip()
-    password = data.password.strip()
+    if vm.error:
+        return vm.to_dict()
 
-    if not (email or password):
-        return {
-            'email': email,
-            'password': password,
-            'error': "Some required fields are missing."
-        }
-
-    user = user_service.login_user(email, password)
+    user = user_service.login_user(vm.email, vm.password)
     if not user:
-        return {
-            'email': email,
-            'password': password,
-            'error': "The account doesn't exist or the password is wrong."
-        }
+        vm.error = "The account does not exist or the password is wrong."
+        return vm.to_dict()
+
     resp = redirect('/account')
     cookie_auth.set_auth(resp, user.id)
+
     return resp
 
 
