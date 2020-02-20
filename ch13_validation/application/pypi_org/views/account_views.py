@@ -3,6 +3,8 @@ from flask import Blueprint, request, redirect
 from application.pypi_org.infrastructure import cookie_auth, request_dict
 from application.pypi_org.infrastructure.view_modifiers import response
 from application.pypi_org.services import user_service
+from application.pypi_org.viewmodels.account.index_viewmodel import IndexViewModel
+from application.pypi_org.viewmodels.account.register_viewmodel import RegisterViewModel
 
 blueprint = Blueprint('account', __name__, template_folder='templates')
 
@@ -10,13 +12,10 @@ blueprint = Blueprint('account', __name__, template_folder='templates')
 @blueprint.route('/account')
 @response(template_file='account/index.html')
 def index():
-    user_id = cookie_auth.get_user_id_via_auth_cookie(request)
-    user = user_service.find_user_by_id(user_id)
-    if not user:
+    vm = IndexViewModel()
+    if not vm.user:
         redirect('/account/login')
-    return {
-        'user': user
-    }
+    return vm.to_dict()
 
 
 @blueprint.route('/account/register', methods=['GET'])
@@ -28,27 +27,17 @@ def register_get():
 @blueprint.route('/account/register', methods=['POST'])
 @response(template_file='account/register.html')
 def register_post():
-    data = request_dict.create(default_val='')
+    vm = RegisterViewModel()
+    vm.validate()
 
-    name = data.name
-    email = data.email.lower().strip()
-    password = data.password.strip()
+    if vm.error:
+        return vm.to_dict()
 
-    if not (name or email or password):
-        return {
-            'name': name,
-            'email': email,
-            'password': password,
-            'error': "Some required fields are missing."
-        }
-    user = user_service.create_user(name, email, password)
+    user = user_service.create_user(vm.name, vm.email, vm.password)
     if not user:
-        return {
-            'name': name,
-            'email': email,
-            'password': password,
-            'error': "A user with that email already exists."
-        }
+        vm.error = 'The account could not be created.'
+        return vm.to_dict()
+
     resp = redirect('/account')
     cookie_auth.set_auth(resp, user.id)
     return resp
