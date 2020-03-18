@@ -11,9 +11,17 @@ app = flask.Flask(__name__)
 
 
 def main():
-    register_blueprints()
-    setup_db()
+    configure()
     app.run(debug=True)
+
+
+def configure():
+    print('Configuring Flask app: ')
+    register_blueprints()
+    print('Registered blueprints')
+    setup_db()
+    print('DB setup completed')
+    print('', flush=True)
 
 
 def setup_db():
@@ -39,3 +47,5 @@ def register_blueprints():
 
 if __name__ == '__main__':
     main()
+else:
+    configure()
