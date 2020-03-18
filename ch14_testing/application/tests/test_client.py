@@ -13,8 +13,8 @@ sys.path.insert(0, container_folder)
 
 @pytest.fixture
 def client():
-    flask_app.app.config['TESTING'] = True
-    client = flask_app.app.test_client()
+    flask_app.config['TESTING'] = True
+    client = flask_app.test_client()
     try:
         app.register_blueprints()
     except Exception as e:

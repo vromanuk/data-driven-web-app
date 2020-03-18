@@ -15,7 +15,7 @@ blueprint = Blueprint('account', __name__, template_folder='templates')
 def index():
     vm = IndexViewModel()
     if not vm.user:
-        redirect('/account/login')
+        return redirect('/account/login')
     return vm.to_dict()
 
 
