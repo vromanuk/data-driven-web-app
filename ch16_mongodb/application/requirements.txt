@@ -1,5 +1,7 @@
 flask
 sqlalchemy
+mongoengine
+
 progressbar2
 python-dateutil
 passlib
